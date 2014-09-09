@@ -1,0 +1,2 @@
+g++ -Wall -g -c wherewhen.c
+g++ -g wherewhen.o countdown.o main.o -lm -o myprogram
