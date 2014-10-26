@@ -84,6 +84,34 @@ Node* getLCA_BT(Node* node1, Node* node2, Node* root)
 	}
 }
 
+
+// another algorithm for general binary tree
+bool covers(Node* root, Node* p)
+{
+	if(root == NULL)
+	{
+		return false;
+	}
+	if(root == p)
+	{
+		return true;
+	}
+	return covers(root->getLeft(), p) || covers(root->getRight(), p);
+}
+
+Node* getCommonAncestor(Node* node1, Node* node2, Node* root)
+{
+	if(covers(root->getLeft(), node1) && covers(root->getLeft(), node2))
+	{
+		return getCommonAncestor(node1, node2, root->getLeft());
+	}
+	if(covers(root->getRight(), node1) && covers(root->getRight(), node2))
+	{
+		return getCommonAncestor(node1, node2, root->getRight());
+	}
+	return root;
+}
+
 int main()
 {
 	//case 1 is for binary search tree.
@@ -111,4 +139,6 @@ int main()
 	cout<<"find 31 and 9 is "<<getLCA_BT(&nn31, &nn22, &root2)->getValue()<<endl;
 	cout<<"find 16 and 93 is "<<getLCA_BT(&nn24, &nn33, &root2)->getValue()<<endl;
 
+	cout<<"find 31 and 9 is "<<getCommonAncestor(&nn31, &nn22, &root2)->getValue()<<endl;
+	cout<<"find 16 and 93 is "<<getCommonAncestor(&nn24, &nn33, &root2)->getValue()<<endl;
 }
