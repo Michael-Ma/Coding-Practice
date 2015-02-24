@@ -7,6 +7,15 @@ using namespace std;
 
 #include <sstream>
 
+/*
+    Time Complexity  : O(nlogn)
+    Space Complexity : O(n)
+    Trick: when comparing with 2 string number, simply comparing it's combinations
+    Special Cases : when multiple 0 in the array, need to output only one 0.
+    Summary:  [how to convert from bad solution to good solution] [how to tackle such kind of problem]
+*/
+
+
 bool str_compare(const string &ll, const string &rr){
     string llrr = ll+rr;
     string rrll = rr+ll;
