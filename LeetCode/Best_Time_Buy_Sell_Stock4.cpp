@@ -6,6 +6,15 @@
 #include <algorithm>
 
 using namespace std;
+/*
+    Time Complexity  : O(n)
+    Space Complexity : O(1)
+    Trick: 
+    1. optimal = local optimal, global optimal
+    2. find all the possibile optimal before ith element
+    Special Cases :
+    Summary: 
+*/
 
 class Solution1{
 public:
@@ -32,6 +41,75 @@ public:
 
 
 /*
+    Time Complexity  : O(n)
+    Space Complexity : O(n)
+    Trick: 
+    1. trade it as two seperate 2nd problem, then combine them together. 
+    2. global(i,k)  = max(global(i-1,k), local(i, k)), local means has to trade at i
+        local(i,k) = max(global(i-1,k-1)+p[i]-p[i-1], local(i-1,k)+p[i]-p[i-1])  trade at i with buy at i-1, or with buy not at i-1
+    Special Cases : need to remember to init all the base cases for DP!
+    Summary: 
+
+*/
+class Solution3 {
+public:
+    int maxProfit(vector<int> &prices) {
+        if(prices.size() <= 1){
+            return 0;
+        }
+        
+        int size = prices.size();
+        int left[size];
+        int right[size];
+        //optimal for single transaction from left to right
+        left[0] = 0;
+        int minNum = prices[0];
+        for(int i=1; i<size; i++){
+            minNum = min(minNum, prices[i]);
+            left[i] = max(left[i-1], prices[i]-minNum);
+        }
+        //optimal for single transaction from right to left
+        right[size-1] = 0;
+        int maxNum = prices[size-1];
+        for(int i=size-2; i>=0; i--){
+            maxNum = max(maxNum, prices[i]);
+            right[i] = max(right[i+1], maxNum-prices[i]);
+        }
+        //go over all the possible combined result for each node
+        int result = 0;
+        for(int i=0; i<size; i++){
+            result = max(result, left[i]+right[i]);
+        }
+        return result;
+    }
+
+    int maxProfit2(vector<int> &prices) {
+        if(prices.size() <= 1){
+            return 0;
+        }
+
+        int size = prices.size();
+        int global[3][size];
+        int local[3][size];
+        //init start point
+        for(int i=0; i<size; i++){
+            global[0][i] = 0;
+            local[0][i] = 0;
+        }
+        for(int k=1; k<3; k++){
+            global[k][0] = 0;
+            local[k][0] = 0;
+            for(int i=1; i<size; i++){
+                local[k][i] = max(global[k-1][i-1]+prices[i]-prices[i-1], local[k][i-1]+prices[i]-prices[i-1]);
+                global[k][i] = max(global[k][i-1], local[k][i]);
+            }
+        }
+        return global[2][size-1];
+    }
+};
+
+
+/*
     Time Complexity  : O(kn)
     Space Complexity : O(2n)
     Trick: 
@@ -43,7 +121,8 @@ public:
 
 class Solution4 {
 public:
-    int optimalProfit(vector<int> &prices){
+    int optimalProfit(vector<int> &prices){   //solution3
+
         if(prices.size() == 0){
             return 0;
         }
@@ -79,7 +158,7 @@ public:
 
 int main()
 {
-    Solution1 test1;
+    Solution3 test3;
     vector<int> prices;
     prices.push_back(12);
     prices.push_back(32);
@@ -87,5 +166,5 @@ int main()
     prices.push_back(20);
     prices.push_back(8);
     prices.push_back(33);
-    cout<<"MaxProfit for Solution1 is :"<<test1.maxProfit(prices)<<endl;
+    cout<<"MaxProfit for Solution3 is :"<<test3.maxProfit2(prices)<<endl;
 }
