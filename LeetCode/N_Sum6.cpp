@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <cmath>
 #include <algorithm>
 //#include <unordered_map>
 
@@ -40,6 +41,139 @@ public:
 };
 
 
+
+
+
+/*
+    Time Complexity  : O(n^2)
+    Space Complexity : O(n^2)
+    Trick: recursion: use two sum to solve three sum
+    Special Cases : for duplicate items in the arary, no need to calcuate twice
+                    since the first item alreaddy get all the possible solutions
+    Summary: 
+*/
+class threeSumSolution {
+public:
+    vector<vector<int> > threeSum(vector<int> &num) {
+        vector<vector<int> > result;
+        if(num.size() < 2){
+            return result;
+        }
+        sort(num.begin(), num.end());
+        for(int i=0; i<num.size()-2; i++){
+            if(i>0 && num[i]==num[i-1]){
+                continue;
+            }
+            int target = 0 - num[i];
+            vector<vector<int> > result_2sum = twoSumWithDup(num, target, i+1);
+            for(int j=0; j<result_2sum.size(); j++){
+                vector<int> tmp;
+                tmp.push_back(num[i]);
+                tmp.push_back(result_2sum[j][0]);
+                tmp.push_back(result_2sum[j][1]);
+                result.push_back(tmp);
+            }
+        }
+        return result;
+    }
+    
+    //assume input is sorted
+    vector<vector<int> > twoSumWithDup(vector<int> &num, int target, int start){
+        vector<vector<int> > result;
+        if(num.size() <= start+1){
+            return result;
+        }
+        int left  = start;
+        int right = num.size()-1;
+        while(left < right){
+//            cout<<"num[left] = "<<num[left]<<", num[right] = "<<num[right]<<", target = "<<target<<endl;
+            if(num[left] + num[right] == target){
+                vector<int> tmp;
+                tmp.push_back(num[left]);
+                tmp.push_back(num[right]);
+                result.push_back(tmp);
+                left++;
+                right--;
+                while(left<right && num[left]==num[left-1]){
+                    left++;
+                }
+                while(left<right && num[right]==num[right+1]){
+                    right--;
+                }
+            }else if(num[left] + num[right] < target){
+                left++;
+            }else{
+                right--;
+            }
+        }
+        return result;
+    }
+};
+
+
+/*
+    Time Complexity  : O(n^2)
+    Space Complexity : O(n^2)
+    Trick: recursion: use two sum to solve three sum
+    Special Cases : for duplicate items in the arary, no need to calcuate twice
+                    since the first item alreaddy get all the possible solutions
+    Summary: 
+*/
+class threeSumClosestSolution {
+public:
+    int threeSumClosest(vector<int> &num, int target) {
+        int sum = 0;
+        int delta = 999999;
+        if(num.size() < 2){
+            return sum;
+        }
+        sort(num.begin(), num.end());
+        for(int i=0; i<num.size()-2; i++){
+            if(i>0 && num[i]==num[i-1]){
+                continue;
+            }
+            int newTarget = target - num[i];
+            int result_2sum = twoSumWithDup(num, newTarget, i+1);
+            int newDelta = abs(newTarget - result_2sum);
+            if(newDelta < delta){
+                delta = newDelta;
+                sum = result_2sum + num[i];
+            }
+        }
+        return sum;
+    }
+    
+    //assume input is sorted
+    int twoSumWithDup(vector<int> &num, int target, int start){
+        int result = 999999;
+        int delta = 999999;
+        if(num.size() <= start+1){
+            return result;
+        }
+        int left  = start;
+        int right = num.size()-1;
+        while(left < right){
+            int new_delta = abs(num[left] + num[right] - target);
+            if(new_delta == 0){  //early return if get best result
+                return target;
+            }else if(new_delta < delta){
+                delta = new_delta;
+                result = num[left] + num[right];
+            }
+
+            if(num[left] + num[right] < target){
+                left++;
+            }else{
+                right--;
+            }
+        }
+        return result;
+    }
+};
+
+
+
+
 int main(){
 	vector<int> input;
 	input.push_back(21);
@@ -51,9 +185,20 @@ int main(){
 	input.push_back(32);
 	input.push_back(-2);
 	input.push_back(6);
-
+/*
 	twoSumSolution test1;
-	vector<int> result;
-	result = test1.twoSum(input, 7);
-	cout<<"index1="<<result[0]<<", index2="<<result[1]<<endl;
+	vector<int> result1;
+	result1 = test1.twoSum(input, 7);
+	cout<<"index1="<<result1[0]<<", index2="<<result1[1]<<endl;
+*/
+    threeSumSolution test2;
+    vector<vector<int> > result2;
+    result2 = test2.threeSum(input);
+    cout<<"result2.size() = "<< result2.size() <<endl;
+    for(int i=0; i<result2.size(); i++){
+        cout<<"("<<result2[i][0]<<", "<<result2[i][1]<<", "<<result2[i][2]<<")"<<endl;
+    }
+
+    threeSumClosestSolution test3;
+    cout<<"test3.threeSumClosest() = "<<test3.threeSumClosest(input, 1)<<endl;
 }
