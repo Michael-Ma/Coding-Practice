@@ -17,6 +17,14 @@
 
 using namespace std;
 
+// Definition for singly-linked list.
+struct ListNode {
+     int val;
+     ListNode *next;
+     ListNode(int x) : val(x), next(NULL) {}
+};
+
+
 
 /*
     Time Complexity  : O(n)
@@ -27,14 +35,6 @@ using namespace std;
     Summary: 
         try to add a dummy head in front of the whole list in order to save some effort!
 */
-
-// Definition for singly-linked list.
-struct ListNode {
-     int val;
-     ListNode *next;
-     ListNode(int x) : val(x), next(NULL) {}
-};
-
 class Solution {
 public:
     ListNode *partition(ListNode *head, int x) {
