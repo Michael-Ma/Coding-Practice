@@ -100,7 +100,7 @@ public:
             current = current->next[index];
         }
 
-        if(current->count == 2){
+        if(current->count == 2){  // is not >=2, because we don't want to add duplicate one
             return true;
         }
 
